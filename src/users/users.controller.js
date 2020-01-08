@@ -9,12 +9,5 @@ export class UsersController {
   constructor(usersService) {
     this.usersService = usersService;
   }
-
-  @Post('create')
-  @Bind(Body())
-  create (createUserDto) {
-    this.usersService.create(createUserDto);
-    return 'Ok';
-  }
-
+  
 }

@@ -1,9 +1,8 @@
 # nestjs-boilerplate
 
 ## Description
-This is try to build a Nestjs boilerplate with all frequent needed features. At the same time this is my first project in Nestjs.
-** Development in progress, currently this is very early version. **
-
+This is try to build a NestJS boilerplate with all frequent needed features. At the same time this is my first project in NestJS.
+__Development in progress, currently this is very early version.__
 
 ## Installation
 
