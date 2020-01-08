@@ -22,6 +22,8 @@ export const UserSchema = new Schema({
   registrationConfirmedAt: {
     type: Date,
   },
+}, {
+  versionKey: false,
 });
 
 UserSchema.pre('save', function(next) {

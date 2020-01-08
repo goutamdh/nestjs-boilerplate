@@ -1,8 +1,9 @@
 import { Schema, Types } from 'mongoose';
 
 export const ConfirmationSchema = new Schema({
-  userId: {
+  user: {
     type: Types.ObjectId,
+    ref: 'User',
     required: true,
   },
   type: {
@@ -17,4 +18,6 @@ export const ConfirmationSchema = new Schema({
     type: Date,
     required: true,
   },
+}, {
+  versionKey: false,
 });

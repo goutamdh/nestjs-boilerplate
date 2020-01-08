@@ -1,12 +1,16 @@
 import { Injectable, Dependencies } from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
 import UsersException from './users.exception';
+import { ConfirmationsService } from '../confirmations/confirmations.service';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
-@Dependencies(getModelToken('User'))
+@Dependencies(ConfigService, getModelToken('User'), ConfirmationsService)
 export class UsersService {
-  constructor(userModel) {
+  constructor(configService, userModel, confirmationsService) {
+    this.configService = configService;
     this.userModel = userModel;
+    this.confirmationsService = confirmationsService;
   }
 
   async create(user, confirmationIsNeeded) {
@@ -19,11 +23,22 @@ export class UsersService {
     const createdUser = new this.userModel(user);
     await createdUser.save();
     
-    if (confirmationIsNeeded) {
-      
+    if (confirmationIsNeeded && this.configService.get('users.sendRegistrationConfirmation')) {
+      const confirmationExpireTime = this.configService.get('users.registrationConfirmationExpireTime');
+      const confirmation = await this.confirmationsService.create(createdUser, 'registration', confirmationExpireTime);
+      this.confirmationsService.send(confirmation, 'email', createdUser.email);
     }
 
     return createdUser;
+  }
+
+  async resendRegistrationConfirmation(user) {
+    if (!this.configService.get('users.sendRegistrationConfirmation')) {
+      throw new UsersException('REGISTRATION_CONFIRMATIONS_DISABLED');
+    }
+    const confirmationExpireTime = this.configService.get('users.registrationConfirmationExpireTime');
+    const confirmation = await this.confirmationsService.create(user, 'registration', confirmationExpireTime);
+    this.confirmationsService.send(confirmation, 'email', user.email);
   }
 
   async findOneById(id) {
@@ -56,6 +71,11 @@ export class UsersService {
     });
   }
 
+  async confirmRegistration(user) {
+    user.registrationConfirmedAt = Date.now();
+    await user.save();
+  }
+
   // async findByLogins(logins: Array<string>): Promise<Array<User>> {
   //   const emails = [];
   //   const names = [];
@@ -77,4 +97,10 @@ export class UsersService {
   //     },
   //   });
   // }
+
+  onModuleInit () {
+    this.confirmationsService.on('confirmed#registration', (event) => {
+      this.confirmRegistration(event.confirmation.user);
+    });
+  }
 }

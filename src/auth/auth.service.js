@@ -4,13 +4,15 @@ import * as Argon2 from 'argon2';
 import * as Crypto from 'crypto';
 import { CacheManager } from '../cache';
 import AuthException from './auth.exception';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
-@Dependencies(UsersService, CacheManager)
+@Dependencies(UsersService, ConfigService, CacheManager)
 export class AuthService {
 
-  constructor(usersService, cache) {
+  constructor(usersService, configService, cache) {
     this.usersService = usersService;
+    this.configService = configService;
     this.cache = cache;
   }
 
@@ -31,7 +33,10 @@ export class AuthService {
     return null;
   }
 
-  async login (user) {
+  async login (user) { // TODO: Add limit for failed attempts
+    if (this.configService.get('auth.needsConfirmedRegistrationToLogin') && !user.registrationConfirmedAt) {
+      throw new AuthException('REGISTRATION_CONFIRMATION_NEEDED');
+    }
     const expireTime = 3600;
     const accessTokenLength = 64;
     const accessToken = await this.generateAccessToken(accessTokenLength);
@@ -46,13 +51,13 @@ export class AuthService {
     };
   }
 
-  async register (registerDto) {
+  async register (request, registerDto) { // TODO: Registrations limit from one IP address.
     try {
       const hashedPassword = await this.hashPassword(registerDto.password);
       await this.usersService.create({
         ...registerDto,
         password: hashedPassword,
-      });
+      }, true);
       return {};
     } catch (error) {
       throw new AuthException(error.message);

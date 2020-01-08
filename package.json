@@ -15,6 +15,7 @@
   "dependencies": {
     "2fa": "^0.1.2",
     "@nestjs/common": "^6.7.2",
+    "@nestjs/config": "0.0.9",
     "@nestjs/core": "^6.7.2",
     "@nestjs/mongoose": "^6.1.2",
     "@nestjs/passport": "^6.1.1",

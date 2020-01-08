@@ -73,7 +73,7 @@ export class TotpService {
     };
   }
 
-  verify (key, token, options) {
+  verify (key, token, options) { // TODO: Add limit for failed attempts
     options = {
       ...this.options,
       ...options,
@@ -109,7 +109,7 @@ export class TotpService {
     return await this.disable(user);
   }
 
-  async disableWithBackupCode (user, backupCode) {
+  async disableWithBackupCode (user, backupCode) { // TODO: Add limit for failed attempts
     if (!user.totp || !user.totp.isActive || !backupCode) {
       throw new TotpException('CANNOT_DISABLE_TOTP');
     }

@@ -1,12 +1,17 @@
 import { Injectable, Dependencies } from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
-import * as DeliveryMethods from './delivery'
+import * as DeliveryMethods from './delivery';
+import { EventEmitter } from 'events';
+import { ConfirmedEvent } from './confirmed.event';
+import { UsersService } from '../users/users.service';
+import ConfirmationsException from './confirmations.exception';
 
 @Injectable()
 @Dependencies(getModelToken('Confirmation'))
-export class ConfirmationsService {
+export class ConfirmationsService extends EventEmitter {
   
   constructor (confirmation) {
+    super();
     this.confirmation = confirmation;
   }
 
@@ -21,7 +26,7 @@ export class ConfirmationsService {
 
   async getPendingConfirmations (user, filters) {
     return await this.confirmation.find({
-      userId: user.id,
+      user: user.id,
       ...filters,
     });
   }
@@ -30,7 +35,7 @@ export class ConfirmationsService {
     if (!expireTime) expireTime = 86400;
     const token = typeof tokenGenerator === 'function' ? await tokenGenerator() : this.generateToken(128);
     const confirmation = new this.confirmation({
-      userId: user.id,
+      user: user.id,
       type,
       token,
       expiresAt: Date.now() + expireTime * 1000,
@@ -44,18 +49,15 @@ export class ConfirmationsService {
     return delivery.send(confirmation, to);
   }
 
-  async isConfirmed (user, type) {
-    return !await this.confirmation.findOne({
-      type,
-      userId: user.id,
-    });
-  }
-
-  async confirm (token) {
+  async confirm (token) { // TODO: Add rate limit
     const confirmation = await this.confirmation.findOne({
       token,
-    });
-    return await confirmation.remove();
+    }).populate('user');
+    if (!confirmation) {
+      throw new ConfirmationsException('CONFIRMATION_NOT_FOUND');
+    }
+    await confirmation.remove();
+    this.emit(`confirmed#${confirmation.type}`, new ConfirmedEvent(confirmation));
   }
 
 }

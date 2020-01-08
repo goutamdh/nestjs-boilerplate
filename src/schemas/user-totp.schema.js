@@ -17,4 +17,7 @@ export const UserTotpSchema = new Schema({
     type: [String],
     required: true,
   },
+}, {
+  id: false,
+  versionKey: false,
 });
