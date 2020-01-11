@@ -16,6 +16,7 @@ import configuration from './config';
     MongooseModule.forRoot('mongodb://127.0.0.1/nest', {
       useNewUrlParser: true,
       useUnifiedTopology: true,
+      useCreateIndex: true,
     }),
     CacheModule.forRoot({
       dialect: 'redis',
