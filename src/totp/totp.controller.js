@@ -29,15 +29,15 @@ export class TotpController {
   @UseGuards(AuthGuard('bearer'))
   @Put('disableWithToken')
   @Bind(Request(), Body())
-  async disable({ user }, { token }) {
+  async disableWithToken({ user }, { token }) {
     await this.totpService.disableWithToken(user, token);
     return {};
   }
   
   @Put('disableWithBackupCode')
   @Bind(Request(), Body())
-  async disable({ user }, { code }) {
-    await this.totpService.disableWithToken(user, code);
+  async disableWithBackupCode({ user }, { code }) {
+    await this.totpService.disableWithBackupCode(user, code);
     return {};
   }
   
