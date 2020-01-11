@@ -27,6 +27,7 @@ __Development in progress, currently this is very early version.__
 - [ ] Permissions and Roles system
 - [ ] Add rate limiting in some places
 - [ ] Move all values to configuration files
+- [ ] E-mails internationalization templates
 
 ## Installation
 
