@@ -1,16 +1,19 @@
-import { Injectable, Dependencies } from '@nestjs/common';
+import { Injectable, Dependencies, Logger } from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
 import UsersException from './users.exception';
 import { ConfirmationsService } from '../confirmations/confirmations.service';
 import { ConfigService } from '@nestjs/config';
+import { MailerService } from '@nest-modules/mailer';
 
 @Injectable()
-@Dependencies(ConfigService, getModelToken('User'), ConfirmationsService)
+@Dependencies(ConfigService, getModelToken('User'), ConfirmationsService, MailerService)
 export class UsersService {
-  constructor(configService, userModel, confirmationsService) {
+  constructor(configService, userModel, confirmationsService, mailerService) {
+    this.logger = new Logger(UsersService.name);
     this.configService = configService;
     this.userModel = userModel;
     this.confirmationsService = confirmationsService;
+    this.mailerService = mailerService;
   }
 
   async create(user, confirmationIsNeeded) {
@@ -26,7 +29,20 @@ export class UsersService {
     if (confirmationIsNeeded && this.configService.get('users.sendRegistrationConfirmation')) {
       const confirmationExpireTime = this.configService.get('users.registrationConfirmationExpireTime');
       const confirmation = await this.confirmationsService.create(createdUser, 'registration', confirmationExpireTime);
-      this.confirmationsService.send(confirmation, 'email', createdUser.email);
+      try {
+        await this.mailerService.sendMail({
+          to: createdUser.email,
+          from: 'noreply@kysune.me',
+          subject: 'Registration',
+          template: 'user-registration',
+          context: {
+            token: confirmation.token,
+            username: createdUser.name,
+          },
+        });
+      } catch (error) {
+        this.logger.error(error.message);
+      }
     }
 
     return createdUser;

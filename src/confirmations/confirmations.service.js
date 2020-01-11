@@ -1,6 +1,5 @@
 import { Injectable, Dependencies } from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
-import * as DeliveryMethods from './delivery';
 import { EventEmitter } from 'events';
 import { ConfirmedEvent } from './confirmed.event';
 import ConfirmationsException from './confirmations.exception';
@@ -9,7 +8,7 @@ import ConfirmationsException from './confirmations.exception';
 @Dependencies(getModelToken('Confirmation'))
 export class ConfirmationsService extends EventEmitter {
   
-  constructor (confirmation) {
+  constructor (confirmation, deliveryService) {
     super();
     this.confirmation = confirmation;
   }
@@ -41,11 +40,6 @@ export class ConfirmationsService extends EventEmitter {
     });
     confirmation.save();
     return confirmation;
-  }
-
-  async send (confirmation, deliveryMethod, to) {
-    const delivery = new DeliveryMethods[deliveryMethod](this);
-    return delivery.send(confirmation, to);
   }
 
   async confirm (token) { // TODO: Add rate limit
