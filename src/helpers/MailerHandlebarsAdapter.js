@@ -2,7 +2,7 @@ import { Logger } from '@nestjs/common';
 import * as Fs from 'fs';
 import * as Path from 'path';
 import * as Handlebars from 'handlebars';
-import CSSInliner from 'css-inliner';
+import { minify as HtmlMinify } from 'html-minifier';
 import RecursiveReadDir from 'fs-readdir-recursive';
 
 /**
@@ -57,13 +57,9 @@ export class MailerHandlebarsAdapter {
       ...mail.data.context,
     });
     
-    const { dir } = Path.parse(templatePath);
-    const inliner = new CSSInliner({ directory: dir });
-
-    inliner.inlineCSSAsync(rendered).then((html) => {
-      mail.data.html = html;
-      return callback();
+    mail.data.html = HtmlMinify(rendered, {
+      minifyCSS: true,
     });
-
+    return callback();
   }
 }
