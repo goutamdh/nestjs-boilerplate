@@ -4,9 +4,35 @@
 This is try to build a NestJS boilerplate with all frequent needed features. At the same time this is my first project in NestJS.
 __Development in progress, currently this is very early version.__
 
+## Features
+- Users system with token-session authentication
+- Universal confirmations system
+- Time-based One-time Password (TOTP)
+- Ready mailer ([nest-modules/mailer](https://github.com/nest-modules/mailer))
+- E-mail templates using [Handlebars](https://handlebarsjs.com)
+
+## Endpoints
+### POST /auth/register
+### POST /auth/login
+### GET /auth/user
+### PUT /confirmations/confirm
+### POST /totp/generate
+### PUT /totp/enable
+### PUT /totp/disableWithToken
+### PUT /totp/disableWithBackupCode
+
+## TODO:
+- [x] TOTP
+- [ ] Password recovering
+- [ ] Permissions and Roles system
+- [ ] Add rate limiting in some places
+- [ ] Move all values to configuration files
+
 ## Installation
 
 ```bash
+$ git clone https://github.com/SzymonLisowiec/nestjs-boilerplate
+$ cd nestjs-boilerplate
 $ npm install
 ```
 
@@ -20,10 +46,10 @@ $ npm run start
 $ npm run start:dev
 
 # production mode
-npm run start:prod
+$ npm run start:prod
 ```
 
-## Test
+## Test (project have no tests at the moment)
 
 ```bash
 # unit tests
