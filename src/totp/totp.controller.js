@@ -3,7 +3,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { TotpService } from './totp.service';
 import { TotpExceptionFilter } from './totp-exception.filter';
 
-@Controller('auth/totp')
+@Controller('totp')
 @UseFilters(TotpExceptionFilter)
 @Dependencies(TotpService)
 export class TotpController {
@@ -19,7 +19,7 @@ export class TotpController {
   }
 
   @UseGuards(AuthGuard('bearer'))
-  @Post('enable')
+  @Put('enable')
   @Bind(Request(), Body())
   async enable({ user }, { token }) {
     await this.totpService.enable(user, token);
@@ -27,14 +27,14 @@ export class TotpController {
   }
 
   @UseGuards(AuthGuard('bearer'))
-  @Post('disableWithToken')
+  @Put('disableWithToken')
   @Bind(Request(), Body())
   async disable({ user }, { token }) {
     await this.totpService.disableWithToken(user, token);
     return {};
   }
   
-  @Post('disableWithBackupCode')
+  @Put('disableWithBackupCode')
   @Bind(Request(), Body())
   async disable({ user }, { code }) {
     await this.totpService.disableWithToken(user, code);

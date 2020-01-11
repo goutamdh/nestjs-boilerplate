@@ -3,7 +3,6 @@ import { getModelToken } from '@nestjs/mongoose';
 import * as DeliveryMethods from './delivery';
 import { EventEmitter } from 'events';
 import { ConfirmedEvent } from './confirmed.event';
-import { UsersService } from '../users/users.service';
 import ConfirmationsException from './confirmations.exception';
 
 @Injectable()

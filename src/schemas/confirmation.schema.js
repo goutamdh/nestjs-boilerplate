@@ -17,6 +17,9 @@ export const ConfirmationSchema = new Schema({
   expiresAt: {
     type: Date,
     required: true,
+    index: {
+      expireAfterSeconds: 0,
+    },
   },
 }, {
   versionKey: false,

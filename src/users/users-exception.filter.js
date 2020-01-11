@@ -1,4 +1,4 @@
-import { Catch, HttpException, HttpStatus, Inject } from '@nestjs/common';
+import { Catch, HttpException, HttpStatus } from '@nestjs/common';
 import { BaseExceptionFilter } from '@nestjs/core';
 import UsersException from './users.exception';
 

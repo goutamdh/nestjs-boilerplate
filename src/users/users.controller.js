@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Dependencies, Bind, UseFilters } from '@nestjs/common';
+import { Controller, Dependencies, UseFilters } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UsersExceptionFilter } from './users-exception.filter';
 

@@ -1,8 +1,8 @@
-import { Injectable, Dependencies, HttpException, HttpStatus } from '@nestjs/common';
-import { UsersService } from '../../users/users.service';
+import { Injectable, Dependencies } from '@nestjs/common';
+import { UsersService } from '../users/users.service';
 import TotpException from './totp.exception';
 import Otp from '2fa';
-import { CacheManager } from '../../cache';
+import { CacheManager } from '../cache';
 
 @Injectable()
 @Dependencies(UsersService, CacheManager)
