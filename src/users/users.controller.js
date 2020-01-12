@@ -12,10 +12,9 @@ export class UsersController {
   constructor(usersService, rolesBuilder) {
     this.usersService = usersService;
     this.roles = rolesBuilder;
-    console.log(this);
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard('bearer'))
   @Get(':userId')
   @Bind(UserRoles(), Param())
   async test (roles, { userId }) {
