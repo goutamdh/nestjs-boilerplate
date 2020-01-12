@@ -32,7 +32,6 @@ export class UsersService {
       try {
         await this.mailerService.sendMail({
           to: createdUser.email,
-          from: 'noreply@kysune.me',
           subject: 'Registration',
           template: 'user-registration',
           context: {

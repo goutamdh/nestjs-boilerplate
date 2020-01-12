@@ -28,4 +28,16 @@ export class CacheModule {
       ],
     };
   }
+
+  static async forRootAsync(asyncOptions) {
+    return {
+      module: CacheModule,
+      providers: [
+        {
+          provide: CACHE_MODULE_OPTIONS,
+          ...asyncOptions,
+        },
+      ],
+    };
+  }
 }

@@ -53,6 +53,7 @@ export class MailerHandlebarsAdapter {
     }
 
     const rendered = this.precompiledTemplates[templateName]({
+      subject: mail.data.subject,
       ...this.options.context,
       ...mail.data.context,
     });

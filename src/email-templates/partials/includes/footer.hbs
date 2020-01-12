@@ -3,7 +3,10 @@
     <tr>
       <td class="content-block">
         <span class="footer-text">{{ footerText }}</span>
-        <br><a href="{{ termsOfServiceUrl }}" target="_blank">Terms of Service</a> | <a href="{{ privacyPolicyUrl }}" target="_blank">Privacy Policy</a>
+        <br>
+        {{#if termsOfServiceUrl }}<a href="{{ termsOfServiceUrl }}" target="_blank">Terms of Service</a>{{/if}}
+        {{#if termsOfServiceUrl }}{{#if privacyPolicyUrl }} | {{/if}}{{/if}}
+        {{#if privacyPolicyUrl }}<a href="{{ privacyPolicyUrl }}" target="_blank">Privacy Policy</a>{{/if}}
       </td>
     </tr>
   </table>
