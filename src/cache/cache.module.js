@@ -9,7 +9,7 @@ const CACHE_MODULE_OPTIONS = 'CACHE_MODULE_OPTIONS';
     {
       provide: CacheManager,
       useFactory: async (options) => {
-        return await CacheManager.load(options);
+        return await CacheManager.register(options);
       },
       inject: [CACHE_MODULE_OPTIONS],
     }

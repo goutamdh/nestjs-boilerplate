@@ -8,9 +8,10 @@ export class CacheManager {
     this.store = store;
   }
 
-  static load (options) {
+  static async register (options) {
     const store = new Keyer(options);
-    return store.connect();
+    await store.connect();
+    return new this(store);
   }
 
   get (...args) {
