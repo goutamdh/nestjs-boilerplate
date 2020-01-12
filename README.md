@@ -10,6 +10,7 @@ __Development in progress, currently this is very early version.__
 - Time-based One-time Password (TOTP)
 - Ready mailer ([nest-modules/mailer](https://github.com/nest-modules/mailer))
 - E-mail templates using [Handlebars](https://handlebarsjs.com)
+- Permissions and Roles system shipped by [nest-access-control](https://github.com/nestjsx/nest-access-control) which is using [accesscontrol](https://github.com/onury/accesscontrol)
 
 ## Endpoints
 ### POST /auth/register
@@ -20,11 +21,12 @@ __Development in progress, currently this is very early version.__
 ### PUT /totp/enable
 ### PUT /totp/disableWithToken
 ### PUT /totp/disableWithBackupCode
+### GET /users/:userId
 
 ## TODO:
 - [x] TOTP
+- [x] Permissions and Roles system
 - [ ] Password recovering
-- [ ] Permissions and Roles system
 - [ ] Add rate limiting in some places
 - [ ] Move all values to configuration files
 - [ ] E-mails internationalization templates

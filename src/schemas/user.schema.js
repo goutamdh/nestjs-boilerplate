@@ -9,6 +9,11 @@ export const UserSchema = new Schema({
     type: UserTotpSchema,
     default: null,
   },
+  roles: {
+    type: [String],
+    required: true,
+    default: ['user'],
+  },
   createdAt: {
     type: Date,
     required: true,
@@ -24,15 +29,25 @@ export const UserSchema = new Schema({
   },
 }, {
   versionKey: false,
+  toObject: {
+    virtuals: true,
+    transform: (doc, ret) => {
+      delete ret._id;
+      delete ret.password;
+      delete ret.totp;
+    },
+  },
+  toJSON: {
+    virtuals: true,
+    transform: (doc, ret) => {
+      delete ret._id;
+      delete ret.password;
+      delete ret.totp;
+    },
+  },
 });
 
 UserSchema.pre('save', function(next) {
   this.updatedAt = Date.now();
   return next();
 });
-
-UserSchema.methods.toJSON = function() {
-  const object = this.toObject();
-  delete object.password;
-  return object;
-};
