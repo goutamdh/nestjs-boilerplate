@@ -5,14 +5,16 @@ import * as Crypto from 'crypto';
 import { CacheManager } from '../cache';
 import AuthException from './auth.exception';
 import { ConfigService } from '@nestjs/config';
+import { TotpService } from '../totp/totp.service';
 
 @Injectable()
-@Dependencies(UsersService, ConfigService, CacheManager)
+@Dependencies(UsersService, ConfigService, TotpService, CacheManager)
 export class AuthService {
 
-  constructor(usersService, configService, cache) {
+  constructor(usersService, configService, totpService, cache) {
     this.usersService = usersService;
     this.configService = configService;
+    this.totpService = totpService;
     this.cache = cache;
   }
 
@@ -33,9 +35,17 @@ export class AuthService {
     return null;
   }
 
-  async login (user) { // TODO: Add limit for failed attempts
+  async login (user, { totp }) { // TODO: Add limit for failed attempts
     if (this.configService.get('auth.needsConfirmedRegistrationToLogin') && !user.registrationConfirmedAt) {
       throw new AuthException('REGISTRATION_CONFIRMATION_NEEDED');
+    }
+    if (user.totp && user.totp.isActive) {
+      if (!totp) {
+        throw new AuthException('TOTP_TOKEN_REQUIRED');
+      }
+      if (!await this.totpService.verify(user.totp.key, totp, user.totp)) {
+        throw new AuthException('TOTP_FAILED_VERIFICATION');
+      }
     }
     const expireTime = 3600;
     const accessTokenLength = 64;
@@ -51,11 +61,11 @@ export class AuthService {
     };
   }
 
-  async register (request, registerDto) { // TODO: Registrations limit from one IP address.
+  async register (request, payload) { // TODO: Registrations limit from one IP address.
     try {
-      const hashedPassword = await this.hashPassword(registerDto.password);
+      const hashedPassword = await this.hashPassword(payload.password);
       await this.usersService.create({
-        ...registerDto,
+        ...payload,
         password: hashedPassword,
       }, true);
       return {};

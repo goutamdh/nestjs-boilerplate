@@ -18,6 +18,14 @@ export class AuthExceptionFilter extends BaseExceptionFilter {
         super.catch(new HttpException('First you have to confirm registration. Check your e-mail inbox.', HttpStatus.BAD_REQUEST), host);
         break;
 
+      case 'TOTP_TOKEN_REQUIRED':
+        super.catch(new HttpException('You have to provide code from authenticatior.', HttpStatus.BAD_REQUEST), host);
+        break;
+
+      case 'TOTP_FAILED_VERIFICATION':
+        super.catch(new HttpException('Your authenticatior\'s code is wrong.', HttpStatus.BAD_REQUEST), host);
+        break;
+
       default:
         super.catch(new HttpException('Unknown', HttpStatus.BAD_REQUEST), host);
     }

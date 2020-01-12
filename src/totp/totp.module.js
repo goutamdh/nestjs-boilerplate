@@ -7,5 +7,6 @@ import { UsersModule } from '../users/users.module';
   imports: [UsersModule],
   providers: [TotpService],
   controllers: [TotpController],
+  exports: [TotpService],
 })
 export class TotpModule {}

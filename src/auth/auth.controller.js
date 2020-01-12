@@ -13,15 +13,15 @@ export class AuthController {
 
   @UseGuards(AuthGuard('local'))
   @Post('login')
-  @Bind(Request())
-  async login(request) {
-    return this.authService.login(request.user);
+  @Bind(Request(), Body())
+  async login(request, payload) {
+    return this.authService.login(request.user, payload);
   }
 
   @Post('register')
   @Bind(Request(), Body())
-  async register(request, registerDto) {
-    return this.authService.register(request, registerDto);
+  async register(request, payload) {
+    return this.authService.register(request, payload);
   }
 
   @UseGuards(AuthGuard('bearer'))
