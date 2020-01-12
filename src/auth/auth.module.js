@@ -10,7 +10,7 @@ import { TokenStrategy } from './strategies/bearer.strategy';
 @Module({
   imports: [
     UsersModule,
-    PassportModule,
+    PassportModule.register({ defaultStrategy: 'bearer' }),
     TotpModule,
   ],
   providers: [AuthService, LocalStrategy, TokenStrategy],
