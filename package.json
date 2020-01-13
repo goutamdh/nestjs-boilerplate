@@ -26,6 +26,7 @@
     "cache-manager": "^2.10.1",
     "fs-readdir-recursive": "^1.1.0",
     "html-minifier": "^4.0.0",
+    "i18n": "^0.8.4",
     "keyer": "^1.1.0",
     "mongoose": "^5.8.3",
     "nest-access-control": "^2.0.1",
@@ -36,7 +37,8 @@
     "passport-http-bearer": "^1.0.1",
     "passport-local": "^1.0.0",
     "reflect-metadata": "^0.1.13",
-    "rxjs": "^6.5.3"
+    "rxjs": "^6.5.3",
+    "validatorjs": "^3.18.1"
   },
   "devDependencies": {
     "@nestjs/testing": "^6.7.2",

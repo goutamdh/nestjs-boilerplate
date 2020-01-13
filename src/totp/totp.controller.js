@@ -1,10 +1,8 @@
-import { Controller, Dependencies, UseGuards, Post, Request, Body, Put, Bind, UseFilters } from '@nestjs/common';
+import { Controller, Dependencies, UseGuards, Post, Request, Body, Put, Bind } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { TotpService } from './totp.service';
-import { TotpExceptionFilter } from './totp-exception.filter';
 
 @Controller('totp')
-@UseFilters(TotpExceptionFilter)
 @Dependencies(TotpService)
 export class TotpController {
   constructor (totpService) {

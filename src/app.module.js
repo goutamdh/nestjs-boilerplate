@@ -14,15 +14,15 @@ import { MailerHandlebarsAdapter } from './helpers/MailerHandlebarsAdapter'
 
 @Module({
   imports: [
-    UsersModule,
-    AuthModule,
-    TotpModule,
-    ConfirmationsModule,
-    
     ConfigModule.forRoot({
       isGlobal: true,
       load: configuration,
     }),
+    
+    UsersModule,
+    AuthModule,
+    TotpModule,
+    ConfirmationsModule,
 
     AccessControlModule.forRootAsync({
       useFactory: (configService) => configService.get('roles'),

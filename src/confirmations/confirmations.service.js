@@ -1,8 +1,7 @@
-import { Injectable, Dependencies } from '@nestjs/common';
+import { Injectable, Dependencies, BadRequestException } from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
 import { EventEmitter } from 'events';
 import { ConfirmedEvent } from './confirmed.event';
-import ConfirmationsException from './confirmations.exception';
 
 @Injectable()
 @Dependencies(getModelToken('Confirmation'))
@@ -47,10 +46,11 @@ export class ConfirmationsService extends EventEmitter {
       token,
     }).populate('user');
     if (!confirmation) {
-      throw new ConfirmationsException('CONFIRMATION_NOT_FOUND');
+      throw new BadRequestException('Confirmation not exists.');
     }
     await confirmation.remove();
     this.emit(`confirmed#${confirmation.type}`, new ConfirmedEvent(confirmation));
+    return confirmation;
   }
 
 }

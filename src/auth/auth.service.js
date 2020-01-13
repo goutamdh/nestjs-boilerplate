@@ -1,9 +1,8 @@
-import { Injectable, Dependencies, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, Dependencies, HttpException, HttpStatus, BadRequestException } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import * as Argon2 from 'argon2';
 import * as Crypto from 'crypto';
 import { CacheManager } from '../cache';
-import AuthException from './auth.exception';
 import { ConfigService } from '@nestjs/config';
 import { TotpService } from '../totp/totp.service';
 
@@ -37,14 +36,14 @@ export class AuthService {
 
   async login (user, { totp }) { // TODO: Add limit for failed attempts
     if (this.configService.get('auth.needsConfirmedRegistrationToLogin') && !user.registrationConfirmedAt) {
-      throw new AuthException('REGISTRATION_CONFIRMATION_NEEDED');
+      throw new BadRequestException('First you have to confirm registration. Check your e-mail inbox.');
     }
     if (user.totp && user.totp.isActive) {
       if (!totp) {
-        throw new AuthException('TOTP_TOKEN_REQUIRED');
+        throw new BadRequestException('You have to provide code from authenticatior.');
       }
       if (!await this.totpService.verify(user.totp.key, totp, user.totp)) {
-        throw new AuthException('TOTP_FAILED_VERIFICATION');
+        throw new BadRequestException('Your authenticatior\'s code is wrong.');
       }
     }
     const expireTime = 3600;
@@ -62,16 +61,8 @@ export class AuthService {
   }
 
   async register (request, payload) { // TODO: Registrations limit from one IP address.
-    try {
-      const hashedPassword = await this.hashPassword(payload.password);
-      await this.usersService.create({
-        ...payload,
-        password: hashedPassword,
-      }, true);
-      return {};
-    } catch (error) {
-      throw new AuthException(error.message);
-    }
+    await this.usersService.create(payload, true);
+    return {};
   }
 
   generateAccessToken (length) {
@@ -90,14 +81,6 @@ export class AuthService {
       return await Argon2.verify(hashedPassword, password);
     } catch (error) {
       console.log(error);
-      throw new HttpException('Internal Server Error', HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-  }
-
-  async hashPassword (password) {
-    try {
-      return await Argon2.hash(password);
-    } catch (error) {
       throw new HttpException('Internal Server Error', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }

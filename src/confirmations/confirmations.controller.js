@@ -1,9 +1,7 @@
-import { Controller, Put, Body, Dependencies, Bind, UseFilters } from '@nestjs/common';
-import { ConfirmationsExceptionFilter } from './confirmations-exception.filter';
+import { Controller, Put, Body, Dependencies, Bind } from '@nestjs/common';
 import { ConfirmationsService } from './confirmations.service';
 
 @Controller('confirmations')
-@UseFilters(ConfirmationsExceptionFilter)
 @Dependencies(ConfirmationsService)
 export class ConfirmationsController {
   constructor(confirmationsService) {

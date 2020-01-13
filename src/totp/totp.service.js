@@ -1,6 +1,5 @@
-import { Injectable, Dependencies } from '@nestjs/common';
+import { Injectable, Dependencies, BadRequestException } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
-import TotpException from './totp.exception';
 import Otp from '2fa';
 import { CacheManager } from '../cache';
 
@@ -54,7 +53,7 @@ export class TotpService {
 
   async generate (user) {
     if (user.totp && user.totp.isActive) {
-      throw new TotpException('CANNOT_GENERATE_TOTP');
+      throw new BadRequestException('Cannot generate totp.');
     }
     const key = await this.generateKey(32);
     user.totp = {
@@ -83,10 +82,10 @@ export class TotpService {
 
   async enable (user, token) {
     if (!user.totp || user.totp.isActive) {
-      throw new TotpException('CANNOT_ENABLE_TOTP');
+      throw new BadRequestException('Cannot enable totp.');
     }
     if (!await this.verify(user.totp.key, token)) {
-      throw new TotpException('CANNOT_VERIFY_TOTP');
+      throw new BadRequestException('Cannot verify totp.');
     }
     user.totp.isActive = true;
     await user.save();
@@ -101,20 +100,20 @@ export class TotpService {
 
   async disableWithToken (user, token) {
     if (!user.totp || !user.totp.isActive || !token) {
-      throw new TotpException('CANNOT_DISABLE_TOTP');
+      throw new BadRequestException('Cannot disable totp.');
     }
     if (!await this.verify(user.totp.key, token)) {
-      throw new TotpException('CANNOT_VERIFY_TOTP');
+      throw new BadRequestException('Cannot verify totp.');
     }
     return await this.disable(user);
   }
 
   async disableWithBackupCode (user, backupCode) { // TODO: Add limit for failed attempts
     if (!user.totp || !user.totp.isActive || !backupCode) {
-      throw new TotpException('CANNOT_DISABLE_TOTP');
+      throw new BadRequestException('Cannot disable totp.');
     }
     if (user.totp.backupCodes.indexOf(backupCode) === -1) {
-      throw new TotpException('WRONG_BACKUP_CODE');
+      throw new BadRequestException('Given backup code not matching.');
     }
     return await this.disable(user);
   }
